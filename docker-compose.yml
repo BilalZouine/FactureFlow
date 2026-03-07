@@ -1,0 +1,33 @@
+services:
+  app:
+    container_name: FactureFlow-App
+    image: bilalzouine/factureflow-app:1.0
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "80:5000"
+
+    volumes:
+      - app-data:/app/data
+
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=main.main:create_app
+      - FLASK_DEBUG=0
+
+    env_file:
+      - .env
+
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  app-data:
+    driver: local

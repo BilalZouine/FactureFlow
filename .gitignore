@@ -1,0 +1,40 @@
+# Bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# Virtual env
+.venv/
+venv/
+env/
+.env.local
+.env.*.local
+.env
+
+# Keep .env.example; ignore real .env if you want (uncomment next line)
+# .env
+
+# Build / install
+*.egg-info/
+*.egg
+dist/
+build/
+eggs/
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project
+data/counter.json
+*.log
