@@ -27,7 +27,7 @@ from main.models.invoice import Invoice
 from main.services.number_service import number_to_french
 from main.utils.errors import PDFGenerationError
 
-TABLE_TOP_MARGIN = 0.2 * cm  # space above each table
+TABLE_TOP_MARGIN = 0.5 * cm  # space above each table
 
 _PAD = [
     ("TOPPADDING", (0, 0), (-1, -1), 4),
@@ -64,7 +64,15 @@ def _fmt_num(x):
     return s.replace(",", " ").replace(".", ",")
 
 
-def _p(text, s):
+VIDE_PLACEHOLDER = "/// /// ///"
+
+
+def _vide(text):
+    """Return text if non-empty, else VIDE_PLACEHOLDER so reader sees the field is intentionally empty."""
+    return (text or "").strip() or VIDE_PLACEHOLDER
+
+
+def _p(text, s):    
     return Paragraph(str(text), S[s])
 
 
@@ -143,14 +151,14 @@ def _items(inv):
         )
     n_data = len(inv.rows)  # last data row index = n_data (1-based from row 1)
     rows += [
-        ["", _p("", "nc"), _p("TOTAL H.T", "bc"), _p(_fmt_num(inv.total_ht), "nc")],
+        ['', _p("", "nc"), _p("TOTAL H.T", "bc"), _p(_fmt_num(inv.total_ht), "nc")],
         [
             "",
             _p("", "nc"),
             _p(f"T.V.A {int(inv.tva_rate)} %", "bc"),
             _p(_fmt_num(inv.tva_amount), "nc"),
         ],
-        ["", _p("", "nc"), _p("TOTAL T.T.C", "bc"), _p(_fmt_num(inv.total_ttc), "nc")],
+        ['', _p("", "nc"), _p("TOTAL T.T.C", "bc"), _p(_fmt_num(inv.total_ttc), "nc")],
     ]
     nd = len(rows)
     t = Table(rows, colWidths=cw)
@@ -164,10 +172,21 @@ def _items(inv):
                 ("ALIGN", (1, 0), (-1, -1), "RIGHT"),
                 # Designation cell spans all data rows
                 ("SPAN", (0, 1), (0, n_data)),
-                ("SPAN", (0, nd - 3), (1, nd - 3)),
-                ("SPAN", (0, nd - 2), (1, nd - 2)),
-                ("SPAN", (0, nd - 1), (1, nd - 1)),
-                ("LINEABOVE", (2, nd - 3), (-1, nd - 3), 1, colors.black),
+                
+ 
+                ("SPAN", (0, nd - 3), (1, nd - 1)),
+
+
+                # Remove bottom border (overrides BOX's bottom edge on last row)
+                ("LINEBELOW", (0, nd - 3), (1, nd - 1), 2, colors.white),
+
+                # Also remove the inner vertical line between col 0 and col 1 in spanned rows
+                ("LINEBEFORE", (0, nd - 3), (0, nd - 1), 2, colors.white),
+
+                ("GRID", (2, nd - 3), (-1, nd - 1), 1.5, colors.black),
+
+
+
             ]
         )
     )

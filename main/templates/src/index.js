@@ -101,8 +101,11 @@ async function go() {
         if (!r.ok) { const e = await r.json(); throw new Error(e.message || 'Erreur serveur'); }
         const blob = await r.blob();
         const url = URL.createObjectURL(blob);
-        const m = (r.headers.get('Content-Disposition') || '').match(/filename="(.+)"/);
-        const name = m ? m[1] : 'facture.pdf';
+        const disposition = r.headers.get('Content-Disposition');
+        let name = 'facture.pdf';
+        if (disposition && disposition.includes('filename=')) {
+            name = disposition.split('filename=')[1].replace(/"/g, '');
+        }
         showStatus('s-ok', SVG.ok, 'Facture générée avec succès.', url, name);
         setStep(3);
     } catch (e) {

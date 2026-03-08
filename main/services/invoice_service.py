@@ -3,11 +3,13 @@ from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime
 
 import pandas as pd
+from main.config import COMPANY_CLIENT_ICE, COMPANY_CLIENT_NAME, TVA_RATE
 from main.models.invoice import Invoice, InvoiceRow
 from main.utils.errors import NoNumericDataError
 
-_ICE = "ICE001524400000046"
-_TVA = Decimal("10.0")
+ENTREPRISE = COMPANY_CLIENT_NAME
+_ICE = COMPANY_CLIENT_ICE
+_TVA = Decimal(TVA_RATE)
 _TWO = Decimal("0.01")  # 2 decimal places – never round to whole number
 
 
@@ -56,8 +58,8 @@ def build_invoice(df, col_map, invoice_number):
     if df.empty:
         raise NoNumericDataError()
 
-    client = "CLIENT"
-    if "client" in col_map:
+    client = ENTREPRISE or "CLIENT"
+    if not ENTREPRISE and "client" in col_map:
         v = df[col_map["client"]].dropna()
         if not v.empty:
             client = str(v.iloc[0]).strip()

@@ -3,7 +3,7 @@ version: "3.9"
 services:
   app:
     container_name: FactureFlow
-    image: bilalzouine/factureflow:1.0.0
+    image: bilalzouine/factureflow:1.0.1
     restart: unless-stopped
     build:
       context: .

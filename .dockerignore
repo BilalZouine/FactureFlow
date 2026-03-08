@@ -12,9 +12,7 @@ venv/
 env/
 .env.local
 .env.*.local
-.env
-
-# Keep .env.example; ignore real .env if you want (uncomment next line)
+# Allow .env so the built image can read it when run (e.g. docker run). For production, prefer env_file in compose and add .env here.
 # .env
 
 # Build / install
