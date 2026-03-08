@@ -2,7 +2,7 @@ from flask import Blueprint, request, send_file
 from main.services.parser_service import parse_file
 from main.services.invoice_service import build_invoice
 from main.services.pdf_service import generate_pdf, safe_filename
-from main.utils.counter import reset_counter
+from main.utils.counter import reset_counter, get_next_invoice_number
 from main.utils.errors import (
     AppError,
     MissingFileError,
@@ -45,7 +45,7 @@ def generate():
     if not f.filename:
         raise EmptyFilenameError()
     df, col_map = parse_file(f)
-    num = request.form.get("invoice_number", 1, type=int)
+    num = get_next_invoice_number()
     if num < 1:
         num = 1
     inv = build_invoice(df, col_map, num)

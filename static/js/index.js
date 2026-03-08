@@ -75,7 +75,7 @@ function showStatus(cls, ico, msg, dlHref, dlName) {
     dlEl.classList.add('hidden');
     if (dlHref) {
         dlEl.href = dlHref; dlEl.download = dlName;
-        dlEl.textContent = '↓ ' + dlName;
+        dlEl.textContent =dlName;
         dlEl.classList.remove('hidden');
     }
 }
