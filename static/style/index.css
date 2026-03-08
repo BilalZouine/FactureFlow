@@ -360,9 +360,8 @@ body::after {
 
 /* Logo mark */
 .logomark {
-    width: 28px;
-    height: 28px;
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    width: 50px;
+    height: 50px;
     border-radius: 7px;
     display: flex;
     align-items: center;

@@ -20,9 +20,16 @@ DEFAULT_INVOICE_NUMBER = 1
 
 
 def create_app():
-    template_dir = Path(__file__).resolve().parent / "templates"
+    BASE_DIR = Path(__file__).resolve().parent.parent
 
-    app = Flask(__name__, template_folder=str(template_dir))
+    template_dir = BASE_DIR / "templates"
+    static_dir = BASE_DIR / "static"
+    app = Flask(
+        __name__,
+        template_folder=str(template_dir),
+        static_folder=str(static_dir),
+        static_url_path="/static",
+    )
     app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
     logger = setup_logger()
@@ -35,17 +42,8 @@ def create_app():
     @app.route("/")
     def index():
         return render_template(
-            "index.html",
-            default_invoice_number=DEFAULT_INVOICE_NUMBER
+            "index.html", default_invoice_number=DEFAULT_INVOICE_NUMBER
         )
-
-    @app.route("/style/<path:filename>")
-    def serve_style(filename):
-        return send_from_directory(template_dir / "style", filename)
-
-    @app.route("/src/<path:filename>")
-    def serve_src(filename):
-        return send_from_directory(template_dir / "src", filename)
 
     logger.info("Flask app created successfully")
 

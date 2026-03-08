@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   app:
-    container_name: FactureFlow
+    container_name: factureflow-app
     image: bilalzouine/factureflow:1.0.1
     restart: unless-stopped
     build:
@@ -21,7 +21,7 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: factureflow-nginx
+    container_name: factureflow-web-server
     restart: unless-stopped
     ports:
       - "80:80"

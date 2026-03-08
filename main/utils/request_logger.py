@@ -4,8 +4,7 @@ from flask import request
 
 def should_skip_logging(path: str) -> bool:
     skip_prefixes = (
-        "/src/",
-        "/style/",
+        "/static/"
         "/favicon.ico",
     )
 
