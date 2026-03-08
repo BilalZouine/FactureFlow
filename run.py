@@ -8,7 +8,7 @@ Usage:
 import sys
 import logging
 from pathlib import Path
-# from waitress import serve
+from waitress import serve
 
 ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
@@ -21,7 +21,6 @@ from main.main import create_app
 if __name__ == "__main__":
     app = create_app()
     
-    app.run(debug=True , port=5000)
 
     print("=" * 55)
     print("  OMBJI TRANS  v1.0.0")
@@ -29,4 +28,4 @@ if __name__ == "__main__":
     print("  http://127.0.0.1:5000")
     print("=" * 55)
 
-    # serve(app, host="0.0.0.0", port=5000)
+    serve(app, host="0.0.0.0", port=5000)
