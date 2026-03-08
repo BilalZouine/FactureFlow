@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, send_from_directory
 from main.routes import bp
 from main.utils.errors import AppError
 from main.utils.response import server_error
@@ -26,6 +26,14 @@ def create_app():
     @app.route("/")
     def index():
         return render_template("index.html", default_invoice_number=DEFAULT_INVOICE_NUMBER)
+
+    @app.route("/style/<path:filename>")
+    def serve_style(filename):
+        return send_from_directory(template_dir / "style", filename)
+
+    @app.route("/src/<path:filename>")
+    def serve_src(filename):
+        return send_from_directory(template_dir / "src", filename)
 
     @app.errorhandler(AppError)
     def handle_app_error(e): return e.to_response()
