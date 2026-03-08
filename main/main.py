@@ -1,31 +1,43 @@
 #!/usr/bin/env python3
 """
 OMBJI TRANS — Flask app factory.
-To run the server use from project root:  python run.py
+To run the server use from project root: python run.py
 """
-import sys, traceback
+
+import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from flask import Flask, jsonify, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory
+
 from main.routes import bp
-from main.utils.errors import AppError
-from main.utils.response import server_error
+from main.utils.logger import setup_logger
+from main.utils.request_logger import register_request_logging
+from main.utils.error_handlers import register_error_handlers
 
 DEFAULT_INVOICE_NUMBER = 1
 
 
 def create_app():
     template_dir = Path(__file__).resolve().parent / "templates"
+
     app = Flask(__name__, template_folder=str(template_dir))
     app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
+    logger = setup_logger()
+
     app.register_blueprint(bp)
+
+    register_request_logging(app, logger)
+    register_error_handlers(app, logger)
 
     @app.route("/")
     def index():
-        return render_template("index.html", default_invoice_number=DEFAULT_INVOICE_NUMBER)
+        return render_template(
+            "index.html",
+            default_invoice_number=DEFAULT_INVOICE_NUMBER
+        )
 
     @app.route("/style/<path:filename>")
     def serve_style(filename):
@@ -35,24 +47,6 @@ def create_app():
     def serve_src(filename):
         return send_from_directory(template_dir / "src", filename)
 
-    @app.errorhandler(AppError)
-    def handle_app_error(e): return e.to_response()
-
-    @app.errorhandler(404)
-    def handle_404(e):
-        return jsonify({"status":"error","error_code":"NOT_FOUND","message":str(e)}), 404
-
-    @app.errorhandler(405)
-    def handle_405(e):
-        return jsonify({"status":"error","error_code":"METHOD_NOT_ALLOWED","message":str(e)}), 405
-
-    @app.errorhandler(413)
-    def handle_413(e):
-        return jsonify({"status":"error","error_code":"FILE_TOO_LARGE","message":"File exceeds 16 MB limit."}), 413
-
-    @app.errorhandler(Exception)
-    def handle_unexpected(e):
-        traceback.print_exc()
-        return server_error("Unexpected error.", details={"type":type(e).__name__,"info":str(e)})
+    logger.info("Flask app created successfully")
 
     return app
